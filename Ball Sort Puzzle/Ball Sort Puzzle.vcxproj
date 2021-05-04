@@ -145,7 +145,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Debug.cpp" />
+    <ClCompile Include="src\Graphics.cpp" />
     <ClCompile Include="src\BSP.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\BSP.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
