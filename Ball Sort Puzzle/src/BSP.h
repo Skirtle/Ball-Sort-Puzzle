@@ -1,4 +1,37 @@
 #pragma once
 
-void initLog();
-void log(const char* message);
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+
+class Color {
+private:
+	float r, g, b;
+public:
+	Color();
+	Color(float red, float green, float blue);
+	void setRed(float red);
+	void setGreen(float green);
+	void setBlue(float blue);
+	void setColor(float red, float green, float blue);
+	const bool isEqualTo(Color c);
+	const float getRed() const;
+	const float getGreen() const;
+	const float getBlue() const;
+	friend std::ostream& operator<<(std::ostream& out, const Color & c);
+};
+
+class ColorStack {
+private:
+	Color* arr;
+public:
+	int maxSize;
+	int capacity;
+	ColorStack(int size); bool push(Color c);
+	Color pop();
+	const Color peak();
+	const void printStack();
+	void freeStack();
+};
+
+std::ostream& operator<<(std::ostream& os, Color const& c);
