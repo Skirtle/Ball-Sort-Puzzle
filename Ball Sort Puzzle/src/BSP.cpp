@@ -56,16 +56,20 @@ ColorStack::ColorStack(int size) {
 	empty = true;
 }
 const void ColorStack::printStack() {
-	for (int i = 0; i < capacity; i++) {
+	int i = 0;
+	for (i = 0; i < capacity; i++) {
 		const Color c = arr[i];
 		std::cout << c;
 		if (i != capacity - 1) {
 			std::cout << ", ";
 		}
 	}
+
+	if (i == 0) std::cout << "EMPTY";
 	std::cout << std::endl;
 }
 const Color ColorStack::peak() {
+	if (isEmpty()) return Color(-1, -1, -1);
 	return arr[capacity - 1];
 }
 Color ColorStack::pop() {
@@ -94,14 +98,14 @@ bool ColorStack::isEmpty() {
 }
 
 
-Level::Level(int n) {
+Level::Level(int n, int stackSize) {
 	colorCount = n;
 	int tubeCount = n + 2;
 	tubes = (ColorStack*) calloc(tubeCount, sizeof(ColorStack));
 
 	if (tubes) {
 		for (int i = 0; i < tubeCount; i++) {
-			tubes[i] = ColorStack(n);
+			tubes[i] = ColorStack(stackSize);
 		}
 	}
 }
@@ -113,11 +117,11 @@ void Level::freeMemory() {
 }
 bool Level::forceAdd(int tube, Color c) {
 	if (!tubes[tube - 1].push(c)) {
-		std::cout << "Cannot add " << c << " to test tube " << tube << std::endl;
+		//std::cout << "Cannot add " << c << " to test tube " << tube << std::endl;
 		return false;
 	}
 	else {
-		std::cout << "Succesfully added " << c << " to test tube " << tube << std::endl;
+		//std::cout << "Succesfully added " << c << " to test tube " << tube << std::endl;
 		return true;
 	}
 }
@@ -171,14 +175,14 @@ bool Level::attemptMove(int oldTube, int newTube) {
 	Color c1 = tubes[oldTube - 1].pop();
 	Color c2 = tubes[newTube - 1].peak();
 
-	if (c1.isEqualTo(c2)) {
+	if (c1.isEqualTo(c2) || c2.isEqualTo(Color(-1, -1, -1))) {
 		tubes[newTube - 1].push(c1);
+		return true;
 	}
 	else {
 		tubes[oldTube - 1].push(c1);
 		return false;
 	}
-	return true;
 }
 bool Level::checkAllTubes() {
 	for (int i = 1; i < colorCount + 3; i++) {

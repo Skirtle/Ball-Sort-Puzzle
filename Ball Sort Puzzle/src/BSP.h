@@ -44,7 +44,7 @@ private:
 public:
 	int colorCount;
 
-	Level(int n);
+	Level(int n, int stackSize);
 	void freeMemory();
 	void printTubes();
 	bool forceAdd(int tube, Color c);
