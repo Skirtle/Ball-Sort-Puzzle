@@ -2,20 +2,19 @@
 #include "BSP.h"
 
 int main() {
-	ColorStack cs = ColorStack(4);
+	Level lev = Level(4);
 
-	cs.push(Color(0, 255, 255));
-	cs.push(Color(255, 0, 255));
-	cs.push(Color(255, 255, 0));
-	cs.push(Color(0, 0, 0));
-
-	cs.printStack();
-
-	cs.pop();
-
-	cs.printStack();
+	lev.forceAdd(4, Color(5, 5, 5));
 
 
-	cs.freeStack();
+	std::cout << std::endl;
+	lev.printTubes();
+	std::cout << std::endl;
+	lev.attemptMove(4, 3);
+	lev.printTubes();
+
+	std::cout << lev.checkAllTubes() << std::endl;
+
+	lev.freeMemory();
 	return 0;
 }
