@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <GLFW/glfw3.h>
+#include <string>
 
 class Color {
 private:
@@ -29,12 +31,15 @@ public:
 	int capacity;
 	bool empty;
 
-	ColorStack(int size); bool push(Color c);
+	ColorStack();
+	ColorStack(int size);
+	bool push(Color c);
 	Color pop();
 	const Color peak();
 	const void printStack();
 	void freeStack();
 	bool isEmpty();
+	bool isValid();
 };
 
 class Level {
@@ -43,16 +48,22 @@ private:
 
 public:
 	int colorCount;
+	int tubeCount;
 
 	Level(int n, int stackSize);
 	void freeMemory();
 	void printTubes();
+	void draw();
 	bool forceAdd(int tube, Color c);
 	bool forceMove(int oldTube, int newTube);
-	bool isTubeValid(int tube);
 	bool attemptMove(int oldTube, int newTube);
 	bool checkAllTubes();
-
+	ColorStack getColorStack(int n);
+	std::string generateID();
 };
 
 std::ostream& operator<<(std::ostream& os, Color const& c);
+float map(float val, float oldStart, float oldEnd, float newStart, float newEnd);
+void createTube(float x, float y);
+void createLine(float x1, float y1, float x2, float y2);
+void createCircle(float x, float y, float r, Color c);

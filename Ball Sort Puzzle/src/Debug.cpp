@@ -1,4 +1,4 @@
-#include <iostream>
+/*#include <iostream>
 #include "BSP.h"
 
 int main() {
@@ -39,4 +39,4 @@ int main() {
 
 	lev.freeMemory();
 	return 0;
-}
+}*/
