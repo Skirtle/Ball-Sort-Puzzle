@@ -49,11 +49,14 @@ void createCircle(float x, float y, float r, Color c) {
 }
 
 Color::Color() {
-	setRed(255.0f);
-	setGreen(255.0f);
-	setBlue(255.0f);
+	setRed(1.0f);
+	setGreen(1.0f);
+	setBlue(1.0f);
 }
 Color::Color(float red, float green, float blue) {
+	red = map(red, 0.0f, 255.0f, 0.0f, 1.0f);
+	green = map(green, 0.0f, 255.0f, 0.0f, 1.0f);
+	blue = map(blue, 0.0f, 255.0f, 0.0f, 1.0f);
 	setColor(red, green, blue);
 }
 void Color::setRed(float red) {
@@ -112,7 +115,7 @@ const void ColorStack::printStack() {
 	if (i == 0) std::cout << "EMPTY";
 	std::cout << std::endl;
 }
-const Color ColorStack::peak() {
+const Color ColorStack::peek() {
 	if (isEmpty()) return Color(-1, -1, -1);
 	return arr[capacity - 1];
 }
@@ -125,10 +128,14 @@ Color ColorStack::pop() {
 	return c;
 }
 bool ColorStack::push(Color c) {
-	if (capacity >= maxSize) return false;
+	if (capacity >= maxSize) {
+		capacity = maxSize;
+		return false;
+	}
 
 	arr[capacity] = c;
 	capacity++;
+
 	empty = false;
 
 	return true;
@@ -137,7 +144,13 @@ void ColorStack::freeStack() {
 	free(arr);
 }
 bool ColorStack::isEmpty() {
-	if (capacity == 0) empty = true;
+	if (capacity <= 0) {
+		empty = true;
+		capacity = 0;
+	}
+	else {
+		empty = false;
+	}
 	return empty;
 }
 ColorStack Level::getColorStack(int n) {
@@ -153,7 +166,7 @@ bool ColorStack::isValid() {
 	}
 
 	bool isValid = true;
-	Color compColor = peak();
+	Color compColor = peek();
 	int cap = capacity;
 	ColorStack reversed = ColorStack(capacity);
 
@@ -204,7 +217,13 @@ void Level::printTubes() {
 }
 void Level::draw() {
 	float x = -0.5f;
-	float y = 0.0f;
+	float y = TUBE_Y_SIZE / 2.0f;
+
+	x = -(2.0f / colorCount);
+	float dx = x / 2.0f;
+
+	x = -0.9f + (TUBE_X_SIZE / 2.0f);
+	dx = 1.8f / tubeCount;
 
 	for (int s = 0; s < tubeCount; s++) {
 		createTube(x, y);
@@ -227,7 +246,7 @@ void Level::draw() {
 		}
 
 		tempStack.freeStack();
-		x += 0.25f;
+		x += dx;
 	}
 }
 bool Level::forceAdd(int tube, Color c) {
@@ -245,12 +264,16 @@ bool Level::forceMove(int oldTube, int newTube) {
 	return tubes[newTube - 1].push(tubes[oldTube - 1].pop());
 }
 bool Level::attemptMove(int oldTube, int newTube) {
-	if (tubes[oldTube - 1].isEmpty() || tubes[newTube - 1].capacity >= tubes[newTube - 1].maxSize || oldTube == newTube) {
+	if (!checkValidMove(oldTube, newTube)) {
 		return false;
 	}
 
-	Color c1 = tubes[oldTube - 1].peak();
-	Color c2 = tubes[newTube - 1].peak();
+	/*else if (tubes[oldTube - 1].isEmpty() || tubes[newTube - 1].capacity >= tubes[newTube - 1].maxSize || oldTube == newTube) {
+		return false;
+	*/
+
+	Color c1 = tubes[oldTube - 1].peek();
+	Color c2 = tubes[newTube - 1].peek();
 
 	if (c1.isEqualTo(c2) || tubes[newTube - 1].isEmpty()) {
 		tubes[newTube - 1].push(tubes[oldTube - 1].pop());
@@ -265,6 +288,19 @@ bool Level::checkAllTubes() {
 		}
 	}
 	return true;
+}
+bool Level::checkValidMove(int oldTube, int newTube) {
+	if (tubes[oldTube - 1].isEmpty() || tubes[newTube - 1].capacity >= tubes[newTube - 1].maxSize || oldTube == newTube) {
+		return false;
+	}
+	else if (tubes[newTube - 1].isEmpty()) {
+		return true;
+	}
+
+	Color c1 = tubes[oldTube - 1].peek();
+	Color c2 = tubes[newTube - 1].peek();
+
+	return c1.isEqualTo(c2);
 }
 std::string Level::generateID() {
 	std::string s = "";

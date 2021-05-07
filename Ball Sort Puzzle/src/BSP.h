@@ -35,7 +35,7 @@ public:
 	ColorStack(int size);
 	bool push(Color c);
 	Color pop();
-	const Color peak();
+	const Color peek();
 	const void printStack();
 	void freeStack();
 	bool isEmpty();
@@ -58,6 +58,7 @@ public:
 	bool forceMove(int oldTube, int newTube);
 	bool attemptMove(int oldTube, int newTube);
 	bool checkAllTubes();
+	bool checkValidMove(int oldTube, int newTube);
 	ColorStack getColorStack(int n);
 	std::string generateID();
 };
