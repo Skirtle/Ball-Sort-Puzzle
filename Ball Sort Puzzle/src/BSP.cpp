@@ -1,11 +1,19 @@
 #include "BSP.h"
 #include <iostream>
 #include <string>
+#include <vector>
 
-#define YELLOW Color(255.0f, 255.0f, 0.0f)
-#define RED Color(255.0f, 0.0f, 0.0f)
-#define BLUE Color(0.0f, 0.0f, 255.0f)
-#define GREEN Color(0.0f, 255.0f, 0.0f)
+#define YELLOW Color(255.0f, 255.0f, 0.0f, 'y')
+#define RED Color(255.0f, 0.0f, 0.0f, 'r')
+#define BLUE Color(0.0f, 0.0f, 255.0f, 'b')
+#define GREEN Color(0.0f, 255.0f, 0.0f, 'g')
+#define MAGENTA Color(128.0f, 0.0f, 128.0f, 'm')
+#define ORANGE Color(255.0f, 69.0f, 0.0f, 'o')
+#define CYAN Color(0.0f, 255.0f, 255.0f, 'c')
+#define DARK_TURQ Color(4, 92, 90, 'T')
+#define PINK Color(255, 105, 180, 'p')
+#define DARK_GREEN Color(0, 100, 0, 'G')
+#define WHITE Color(250, 250, 250, 'w')
 #define PI (float) acos(-1.0)
 constexpr auto TUBE_Y_SIZE = 0.4f;
 constexpr auto TUBE_X_SIZE = 0.1f;
@@ -47,6 +55,101 @@ void createCircle(float x, float y, float r, Color c) {
 	glColor3f(255, 255, 255);
 	glEnd();
 }
+bool compareIDs(std::vector<std::string> vec1, std::vector<std::string> vec2) {
+	if (vec1.size() != vec2.size()) return false;
+
+	for (unsigned int i = 0; i < vec1.size(); i++) {
+		for (unsigned int j = 0; j < vec2.size(); j++) {
+			// this is an already checked stack
+			if (vec2.at(j) == "****") continue;
+
+			if (vec2.at(j) == vec1.at(i)) {
+				vec2.at(j) = "****";
+				break;
+			}
+		}
+	}
+
+	for (unsigned int i = 0; i < (int)vec1.size(); i++) {
+		std::cout << vec1.at(i) << ", ";
+	}
+	std::cout << std::endl;
+
+	for (unsigned int i = 0; i < (int)vec2.size(); i++) {
+		std::cout << vec2.at(i) << ", ";
+	}
+	std::cout << std::endl;
+
+	for (unsigned int i = 0; i < (int)vec2.size(); i++) {
+		if (vec2.at(i) != "****") {
+			return false;
+		}
+	}
+
+	return true;
+}
+bool checkForState(std::vector<std::vector<std::string>> main, std::vector<std::string> vari) {
+	for (unsigned int i = 0; i < main.size(); i++) {
+		if (compareIDs(vari, main.at(i))) return true;
+	}
+	return false;
+}
+void populateLevel(Level& lev) {
+	lev.forceAdd(1, BLUE);
+	lev.forceAdd(1, YELLOW);
+	lev.forceAdd(1, DARK_TURQ);
+	lev.forceAdd(1, PINK);
+
+	lev.forceAdd(2, GREEN);
+	lev.forceAdd(2, DARK_GREEN);
+	lev.forceAdd(2, MAGENTA);
+	lev.forceAdd(2, YELLOW);
+
+	lev.forceAdd(3, GREEN);
+	lev.forceAdd(3, DARK_GREEN);
+	lev.forceAdd(3, GREEN);
+	lev.forceAdd(3, DARK_TURQ);
+
+	lev.forceAdd(4, CYAN);
+	lev.forceAdd(4, BLUE);
+	lev.forceAdd(4, ORANGE);
+	lev.forceAdd(4, MAGENTA);
+
+	lev.forceAdd(5, RED);
+	lev.forceAdd(5, ORANGE);
+	lev.forceAdd(5, DARK_TURQ);
+	lev.forceAdd(5, CYAN);
+
+	lev.forceAdd(6, CYAN);
+	lev.forceAdd(6, MAGENTA);
+	lev.forceAdd(6, MAGENTA);
+	lev.forceAdd(6, BLUE);
+
+	lev.forceAdd(7, PINK);
+	lev.forceAdd(7, WHITE);
+	lev.forceAdd(7, WHITE);
+	lev.forceAdd(7, DARK_TURQ);
+
+	lev.forceAdd(8, YELLOW);
+	lev.forceAdd(8, ORANGE);
+	lev.forceAdd(8, PINK);
+	lev.forceAdd(8, RED);
+
+	lev.forceAdd(9, BLUE);
+	lev.forceAdd(9, CYAN);
+	lev.forceAdd(9, RED);
+	lev.forceAdd(9, ORANGE);
+
+	lev.forceAdd(10, PINK);
+	lev.forceAdd(10, RED);
+	lev.forceAdd(10, WHITE);
+	lev.forceAdd(10, YELLOW);
+
+	lev.forceAdd(11, DARK_GREEN);
+	lev.forceAdd(11, WHITE);
+	lev.forceAdd(11, GREEN);
+	lev.forceAdd(11, DARK_GREEN);
+}
 
 Color::Color() {
 	setRed(1.0f);
@@ -58,6 +161,13 @@ Color::Color(float red, float green, float blue) {
 	green = map(green, 0.0f, 255.0f, 0.0f, 1.0f);
 	blue = map(blue, 0.0f, 255.0f, 0.0f, 1.0f);
 	setColor(red, green, blue);
+}
+Color::Color(float red, float green, float blue, char sym) {
+	red = map(red, 0.0f, 255.0f, 0.0f, 1.0f);
+	green = map(green, 0.0f, 255.0f, 0.0f, 1.0f);
+	blue = map(blue, 0.0f, 255.0f, 0.0f, 1.0f);
+	setColor(red, green, blue);
+	symbol = sym;
 }
 void Color::setRed(float red) {
 	r = red;
@@ -84,6 +194,9 @@ const float Color::getGreen() const {
 }
 const float Color::getBlue() const {
 	return b;
+}
+const char Color::getSymbol() {
+	return symbol;
 }
 
 ColorStack::ColorStack() {
@@ -189,6 +302,30 @@ bool ColorStack::isValid() {
 
 	reversed.freeStack();
 	return isValid;
+}
+std::string ColorStack::generateID() {
+	std::string s = "";
+
+	int cap = capacity;
+	ColorStack revStack = ColorStack(cap);
+
+	for (int i = 0; i < cap; i++) {
+		Color c = pop();
+		revStack.push(c);
+	}
+
+	for (int i = 0; i < cap; i++) {
+		Color c = revStack.pop();
+		push(c);
+		s += c.getSymbol();
+	}
+
+	for (int i = 0; i < 4 - cap; i++) {
+		s += "N";
+	}
+
+	revStack.freeStack();
+	return s;
 }
 
 
@@ -302,8 +439,12 @@ bool Level::checkValidMove(int oldTube, int newTube) {
 
 	return c1.isEqualTo(c2);
 }
-std::string Level::generateID() {
-	std::string s = "";
-	
-	return s;
+std::vector<std::string> Level::generateID() {
+	std::vector<std::string> strVector;
+
+	for (int i = 0; i < tubeCount; i++) {
+		strVector.push_back(tubes[i].generateID());
+	}
+
+	return strVector;
 }
