@@ -20,7 +20,7 @@ constexpr auto TUBE_X_SIZE = 0.1f;
 constexpr auto BALL_RADIUS = 0.045f;
 
 std::ostream& operator<<(std::ostream &os, const Color &c) {
-	return os << "(" << c.r << ", " << c.g << ", " << c.b << ")";
+	return os << c.symbol;
 }
 float map(float val, float oldStart, float oldStop, float newStart, float newStop) {
 	return newStart + (newStop - newStart) * ((val - oldStart) / (oldStop - oldStart));
@@ -70,16 +70,6 @@ bool compareIDs(std::vector<std::string> vec1, std::vector<std::string> vec2) {
 		}
 	}
 
-	for (unsigned int i = 0; i < (int)vec1.size(); i++) {
-		std::cout << vec1.at(i) << ", ";
-	}
-	std::cout << std::endl;
-
-	for (unsigned int i = 0; i < (int)vec2.size(); i++) {
-		std::cout << vec2.at(i) << ", ";
-	}
-	std::cout << std::endl;
-
 	for (unsigned int i = 0; i < (int)vec2.size(); i++) {
 		if (vec2.at(i) != "****") {
 			return false;
@@ -90,7 +80,7 @@ bool compareIDs(std::vector<std::string> vec1, std::vector<std::string> vec2) {
 }
 bool checkForState(std::vector<std::vector<std::string>> main, std::vector<std::string> vari) {
 	for (unsigned int i = 0; i < main.size(); i++) {
-		if (compareIDs(vari, main.at(i))) return true;
+		if (compareIDs(main.at(i), vari)) return true;
 	}
 	return false;
 }
@@ -149,6 +139,30 @@ void populateLevel(Level& lev) {
 	lev.forceAdd(11, WHITE);
 	lev.forceAdd(11, GREEN);
 	lev.forceAdd(11, DARK_GREEN);
+	/*lev.forceAdd(1, GREEN);
+	lev.forceAdd(1, YELLOW);
+	lev.forceAdd(1, BLUE);
+	lev.forceAdd(1, BLUE);
+
+	lev.forceAdd(2, GREEN);
+	lev.forceAdd(2, YELLOW);
+	lev.forceAdd(2, GREEN);
+	lev.forceAdd(2, BLUE);
+
+	lev.forceAdd(3, RED);
+	lev.forceAdd(3, YELLOW);
+	lev.forceAdd(3, RED);
+	lev.forceAdd(3, YELLOW);
+
+	lev.forceAdd(4, GREEN);
+	lev.forceAdd(4, MAGENTA);
+	lev.forceAdd(4, MAGENTA);
+	lev.forceAdd(4, RED);
+
+	lev.forceAdd(5, MAGENTA);
+	lev.forceAdd(5, MAGENTA);
+	lev.forceAdd(5, RED);
+	lev.forceAdd(5, BLUE);*/
 }
 
 Color::Color() {
@@ -220,9 +234,6 @@ const void ColorStack::printStack() {
 	for (i = 0; i < capacity; i++) {
 		const Color c = arr[i];
 		std::cout << c;
-		if (i != capacity - 1) {
-			std::cout << ", ";
-		}
 	}
 
 	if (i == 0) std::cout << "EMPTY";
@@ -427,17 +438,17 @@ bool Level::checkAllTubes() {
 	return true;
 }
 bool Level::checkValidMove(int oldTube, int newTube) {
-	if (tubes[oldTube - 1].isEmpty() || tubes[newTube - 1].capacity >= tubes[newTube - 1].maxSize || oldTube == newTube) {
-		return false;
-	}
-	else if (tubes[newTube - 1].isEmpty()) {
-		return true;
-	}
+	bool oldValidAndFull = tubes[oldTube - 1].capacity == tubes[oldTube - 1].maxSize && tubes[oldTube - 1].isValid();
+
+	if (oldTube == newTube || tubes[oldTube - 1].isEmpty() 
+		|| tubes[newTube - 1].capacity == tubes[newTube - 1].maxSize 
+		|| oldValidAndFull) return false;
+	if (tubes[newTube - 1].isEmpty()) return true;
 
 	Color c1 = tubes[oldTube - 1].peek();
 	Color c2 = tubes[newTube - 1].peek();
 
-	return c1.isEqualTo(c2);
+	return c1.getSymbol() == c2.getSymbol();
 }
 std::vector<std::string> Level::generateID() {
 	std::vector<std::string> strVector;
